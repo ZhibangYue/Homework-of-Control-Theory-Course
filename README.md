@@ -278,3 +278,108 @@ $$
 
 因此在实际工程中，往往根据实际动态特性需要选择大小合适的参数，进行仿真调试，几经测试后才可以真正用在实体上。
 
+## 倒立摆问题
+
+### 背景
+
+倒立摆系统通常由以下几个部分组成：
+
+1. **摆杆（Pendulum Rod）**：一个固定在旋转支点上的细杆，重心在支点上方或下方。
+2. **小车（Cart）**：支撑摆杆的移动平台，可以在水平方向上自由移动。
+3. **驱动系统（Actuation System）**：提供水平推力或扭矩的装置，例如电机或伺服系统，用于控制小车的运动，从而控制摆杆的角度。
+4. **传感器（Sensors）**：用于测量摆杆的角度、小车的位置及其速度等物理量。
+
+倒立摆系统的动力学通常由牛顿第二定律或拉格朗日方程描述。对于一个典型的倒立摆-小车系统，动力学方程可以表示为两个耦合的二阶微分方程：
+
+- 小车的运动方程：
+  $$
+  (M+m)\ddot{x}+ml\ddot{\theta}cos⁡(θ)-ml\dot{θ}^2sin⁡(θ)=u
+  $$
+  
+- 摆杆的运动方程：
+  $$
+  (I+ml)\ddot{\theta}+ml\ddot{x}\cos\theta-mgl\sin(θ)=0
+  $$
+  
+
+  其中：
+
+  - $M$ 为小车质量
+  - $m$ 为摆杆质量
+  - $l$ 为摆杆长度
+  - $I$ 为摆杆的惯性矩
+  - $g$ 为重力加速度
+  - $\theta$ 为摆杆的倾角（顺时针为正方向）
+  - $x$ 为小车的水平位置
+  - $u$ 为外部控制力
+
+### 非线性系统线性化
+
+倒立摆系统是一个非线性系统，对于非线性的动态系统，一般要求在平衡点附近对其线性化。
+
+在平衡状态下，系统的加速度和速度都为0，将$\ddot{x}=\dot{x}=\ddot{\theta}=\dot{\theta}=0$代入动力学方程，可以发现：
+$$
+\begin{cases}
+u=0 \\
+mgl\sin(\theta)=0
+\end{cases}
+$$
+可解得$\sin\theta=0$，此外对$x$无要求。
+
+此时$\theta=0+2k\pi$或$\theta=\pi+2k\pi$，其中$k=0, \pm1, \pm2, ...$
+
+但在物理上，$\theta$ 的取值的确是在有限区间$[0, 2\pi]$的。
+
+当$\theta \approx 0$时，可近似$\sin \theta=\theta, \cos\theta=1$，代入动力学方程，可得到：
+$$
+\begin{cases}
+(M+m)\ddot{x}+ml\ddot{\theta}=u\\
+(I+ml^2)\ddot{\theta}+ml\ddot{x}-mgl\theta=0
+\end{cases}
+$$
+对此状态空间建模：
+$$
+\left[
+\begin{matrix}
+\dot{x} \\
+\ddot{x} \\
+\dot{\theta}\\
+\ddot{\theta}
+\end{matrix} 
+\right]
+=\left[
+\begin{matrix}
+0&1&0& 0 \\
+0& \frac{-m^2gl^2}{I(M+m)+Mml^2}&0&0\\
+0&0&0&1 \\
+0&0&\frac{mgl(M+m)}{I(M+m)+Mml^2}&0
+\end{matrix}
+\right]
+\left[
+\begin{matrix}
+{x} \\
+\dot{x} \\
+{\theta}\\
+\dot{\theta}
+\end{matrix} 
+\right]
++\left[
+\begin{matrix}
+0 \\
+\frac{I+ml^2}{I(M+m)+Mml^2} \\ 0 \\
+\frac{-ml}{I(M+m)+Mml^2}
+\end{matrix}
+\right]u
+$$
+
+### 系统的稳定性
+
+首先求取系统矩阵的特征值，令
+$$
+|sI-A|=0
+$$
+解得$s_1=0, s_{2,3}=\pm\sqrt{\frac{mgl(M+m)}{I(M+m)+Mml^2}}$
+
+四阶行列式可以使用代数余子式的方法来计算。
+
+注意到存在一正极点，因此系统不稳定。
