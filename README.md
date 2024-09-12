@@ -350,7 +350,7 @@ $$
 =\left[
 \begin{matrix}
 0&1&0& 0 \\
-0& \frac{-m^2gl^2}{I(M+m)+Mml^2}&0&0\\
+0&0& \frac{-m^2gl^2}{I(M+m)+Mml^2}&0\\
 0&0&0&1 \\
 0&0&\frac{mgl(M+m)}{I(M+m)+Mml^2}&0
 \end{matrix}
