@@ -465,3 +465,74 @@ $$
 大的比例增益会放大系统的不稳定性，因此对于天然不稳定的系统，为使其保持稳定，往往需要牺牲响应速度。
 
 作为黑盒系统的前置环节，PID的抗干扰性也相对较差。
+
+### 状态空间建模
+
+#### 状态空间建模
+
+将已知值代入状态空间表达式，可得到
+$$
+\left[
+\begin{matrix}
+\dot{x} \\
+\ddot{x} \\
+\dot{\theta}\\
+\ddot{\theta}
+\end{matrix} 
+\right]
+=\left[
+\begin{matrix}
+0&1&0& 0 \\
+0&0& -2.093 &0\\
+0&0&0&1 \\
+0&0&45.3488&0
+\end{matrix}
+\right]
+\left[
+\begin{matrix}
+{x} \\
+\dot{x} \\
+{\theta}\\
+\dot{\theta}
+\end{matrix} 
+\right]
++\left[
+\begin{matrix}
+0 \\
+0.9302 \\ 0 \\
+-3.4884
+\end{matrix}
+\right]u
+$$
+输出方程较为简单（只取$\theta$作为输出）：
+$$
+y=\theta=
+\left[
+\begin{matrix}
+0&0&1&0
+\end{matrix}
+\right]
+\left[
+\begin{matrix}
+{x} \\
+\dot{x} \\
+{\theta}\\
+\dot{\theta}
+\end{matrix} 
+\right]
+$$
+
+#### 能控能观性
+
+首先判断系统的能控性和能观测性，可以借助matlab直接判断（本质上还是求能控矩阵和能观矩阵），编写程序如`check_controllability_observability.m`。
+
+同样可以使用matlab判断系统的稳定性，与上述相同，计算系统矩阵$A$的特征值即可。
+
+最终可以得出结论：
+
+- 系统能控
+- 系统不能观
+- 系统不稳定
+
+此外，计算得到系统的极点为 $0， 0，6.7342，-6.7342$。
+
